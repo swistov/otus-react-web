@@ -1,8 +1,44 @@
 import React, { Component } from 'react';
 import './random-curse.css';
+import ApiService from "../../services/api-service";
 
 export default class RandomCurse extends Component {
+
+    apiService = new ApiService();
+
+    state = {
+        curses: {},
+        loading: true,
+        error: false
+    };
+
+    onCurseLoaded = (curse) => {
+        this.setState({
+            curse,
+            loading: false
+        })
+    };
+
+    onError = (err) => {
+      this.setState({
+          error: true,
+          loading: false
+      })
+    };
+
+    updateCurse = () => {
+        const id = Math.floor(Math.random()*25) + 3;
+
+        this.apiService
+            .getCurse(id)
+            .then(this.onCurseLoaded)
+            .catch(this.onError);
+    };
+
     render() {
+
+        const curse = this.apiService.getCurse(3).then(this.onCurseLoaded).catch(this.onError);
+        console.log(curse);
         return (
             <div className={'random-curse'}>
                 <img className={'curse-image'}
